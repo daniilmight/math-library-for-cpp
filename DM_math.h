@@ -1,4 +1,12 @@
+#ifndef DM_MATH_LIB_H
 #define DM_MATH_LIB_H
+
+#define MAX_ITERATIONS 10
+#define EPSILON 1e-7
+
+// Общие переменные, вынесенные за функции
+float term;
+float epsilon;
 
 // Функция для вычисления факториала числа.
 int factorial(int n) {
@@ -13,74 +21,67 @@ float dmAbs(float x) {
 // Функция для возведения числа в степень.
 float dmPow(float base, int exponent) {
     float result = 1.0;
-
     for (int i = 0; i < exponent; ++i) {
         result *= base;
     }
-
     return result;
 }
 
 // Функция для вычисления синуса угла в радианах.
 float dmSin(float x) {
     float result = 0.0;
-    int maxIterations = 10;
-
-    for (int n = 0; n < maxIterations; ++n) {
-        float term = (n % 2 == 0 ? 1 : -1) * (x / dmPow(factorial(2 * n + 1), 1));
+    for (int n = 0; n < MAX_ITERATIONS; ++n) {
+        term = (n % 2 == 0 ? 1 : -1) * (x / dmPow(factorial(2 * n + 1), 1));
         result += term;
     }
-
     return result;
 }
 
 // Функция для вычисления косинуса угла в радианах.
 float dmCos(float x) {
     float result = 0.0;
-    int maxIterations = 10;
-
-    for (int n = 0; n < maxIterations; ++n) {
-        float term = (n % 2 == 0 ? 1 : -1) * (x / dmPow(factorial(2 * n), 1));
+    for (int n = 0; n < MAX_ITERATIONS; ++n) {
+        term = (n % 2 == 0 ? 1 : -1) * (x / dmPow(factorial(2 * n), 1));
         result += term;
     }
-
     return result;
 }
 
 // Функция для вычисления натурального логарифма числа.
 float dmLn(float x) {
-    if (x <= 0) {
-        return 0.0; //Аргумент логарифма должен быть положительным числом
+    if (x <= 0.0f) {
+        return 0.0;
     }
 
     float result = 0.0;
-    float epsilon = 1e-7;
+    epsilon = 1.0 / 1000;
 
     for (int n = 1; n < 1000; ++n) {
-        float term = 1.0 / n * ((n % 2 == 1) ? 1 : -1) * dmPow((x - 1) / x, n);
+        term = epsilon * ((n % 2 == 1) ? 1 : -1) * dmPow((x - 1) / x, n);
         result += term;
 
-        if (dmAbs(term) < epsilon) {
+        if (dmAbs(term) < EPSILON) {
             break;
         }
     }
 
     return result;
 }
+
 // Функция для вычисления обычного логарифма с заданным основанием.
 float dmLog(float base, float x) {
     if (base <= 0 || x <= 0) {
-        return 0.0; //Основание и аргумент логарифма должны быть положительными числами
+        return 0.0;
     }
 
     float result = 0.0;
-    float epsilon = 1e-7;
+    epsilon = 1.0 / 1000;
 
     for (int n = 1; n < 1000; ++n) {
-        float term = 1.0 / n * ((n % 2 == 1) ? 1 : -1) * dmAbs(x - base) / base;
+        term = epsilon * ((n % 2 == 1) ? 1 : -1) * dmAbs(x - base) / base;
         result += term;
 
-        if (dmAbs(term) < epsilon) {
+        if (dmAbs(term) < EPSILON) {
             break;
         }
     }
@@ -91,17 +92,22 @@ float dmLog(float base, float x) {
 // Функция для вычисления квадратного корня числа.
 float dmSqrt(float x) {
     if (x < 0) {
-        return 0.0; //Невозможно вычислить квадратный корень из отрицательного числа
+        return 0.0;
     }
 
     float guess = x;
-    float epsilon = 1e-7;
+    float newGuess;
+    int maxIterations = 1000;
 
-    while (true) {
-        float newGuess = 0.5 * (guess + x / guess);
-        if (dmAbs(newGuess - guess) < epsilon) {
+    while (maxIterations--) {
+        newGuess = 0.5 * (guess + x / guess);
+        if (dmAbs(newGuess - guess) < EPSILON) {
             return newGuess;
         }
         guess = newGuess;
     }
+
+    return guess; // Возвращаем последнее значение в случае превышения максимального числа итераций.
 }
+
+#endif // DM_MATH_LIB_H
