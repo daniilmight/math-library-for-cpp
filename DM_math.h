@@ -5,7 +5,6 @@
 #define EPSILON 1e-7
 
 // Общие переменные, вынесенные за функции
-float term;
 float epsilon;
 
 // Функция для вычисления факториала числа.
@@ -30,8 +29,9 @@ float dmPow(float base, int exponent) {
 // Функция для вычисления синуса угла в радианах.
 float dmSin(float x) {
     float result = 0.0;
+    float term; // Инициализируем term внутри цикла
     for (int n = 0; n < MAX_ITERATIONS; ++n) {
-        term = (n % 2 == 0 ? 1 : -1) * (x / dmPow(factorial(2 * n + 1), 1));
+        term = ((n % 2 == 0) ? 1 : -1) * (dmPow(x, 2 * n + 1) / factorial(2 * n + 1)); // Исправлены расчеты
         result += term;
     }
     return result;
@@ -40,8 +40,9 @@ float dmSin(float x) {
 // Функция для вычисления косинуса угла в радианах.
 float dmCos(float x) {
     float result = 0.0;
+    float term; // Инициализируем term внутри цикла
     for (int n = 0; n < MAX_ITERATIONS; ++n) {
-        term = (n % 2 == 0 ? 1 : -1) * (x / dmPow(factorial(2 * n), 1));
+        term = ((n % 2 == 0) ? 1 : -1) * (dmPow(x, 2 * n) / factorial(2 * n)); // Исправлены расчеты
         result += term;
     }
     return result;
@@ -57,7 +58,7 @@ float dmLn(float x) {
     epsilon = 1.0 / 1000;
 
     for (int n = 1; n < 1000; ++n) {
-        term = epsilon * ((n % 2 == 1) ? 1 : -1) * dmPow((x - 1) / x, n);
+        float term = epsilon * ((n % 2 == 1) ? 1 : -1) * dmPow((x - 1) / x, n);
         result += term;
 
         if (dmAbs(term) < EPSILON) {
@@ -78,7 +79,7 @@ float dmLog(float base, float x) {
     epsilon = 1.0 / 1000;
 
     for (int n = 1; n < 1000; ++n) {
-        term = epsilon * ((n % 2 == 1) ? 1 : -1) * dmAbs(x - base) / base;
+        float term = epsilon * ((n % 2 == 1) ? 1 : -1) * dmAbs(x - base) / base;
         result += term;
 
         if (dmAbs(term) < EPSILON) {
