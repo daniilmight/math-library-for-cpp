@@ -13,8 +13,9 @@ int main() {
     std::cout << "Косинус угла: " << dmCos(angleInRadians) << "\n";
 
     float number, base;
-    std::cout << "Введите число для логарифма и основание: ";
+    std::cout << "Введите число для логарифма и корня: ";
     std::cin >> number;
+    std::cout << "Введите основание для логарифма: ";
     std::cin >> base;
 
     // Вычисление и вывод логарифма.
