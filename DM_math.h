@@ -14,13 +14,13 @@ unsigned long int dmFactorial(int n) {
 }
 
 // Функция для вычисления абсолютного значения числа.
-float dmAbs(float x) {
+double dmAbs(double x) {
     return (x < 0) ? -x : x; // Возвращает модуль числа
 }
 
 // Функция для возведения числа в степень.
-float dmPow(float base, int exponent) {
-    float result = 1.0; // Инициализация результата
+double dmPow(double base, int exponent) {
+    double result = 1.0; // Инициализация результата
     for (int i = 0; i < exponent; ++i) {
         result *= base; // Умножение базы на себя exponent раз
     }
@@ -49,15 +49,14 @@ double dmSin(double x)
 // Функция для вычисления косинуса угла в радианах.
 double dmCos(double x)
 {
-    int sign = (x < 0) ? -1 : 1; // Определение знака угла
     x = dmMod(dmAbs(x), 2 * pi); // Приведение угла к интервалу [0, 2*pi)
-    if (x > pi) { x -= pi; sign *= -1; } // Приведение угла к интервалу [-pi, pi)
-    if (x > pi / 2) x = pi - x; // Приведение угла к интервалу [-pi/2, pi/2)
 
-    double t = 1, s = 1; // Инициализация переменных для ряда Тейлора
-    for (int n = 2; dmAbs(t) > eps; n += 2) // Итерации по ряду Тейлора
-        s += t = -t * x * x / n / (n - 1);
-    return s * sign; // Возвращает косинус угла
+    double s = 1, t = 1;
+    for (int n = 0; dmAbs(t) > eps; n++)
+    {
+        s += t = -(t * x * x) / ((2 * n + 2) * (2 * n + 1));
+    }
+    return s;
 }
 
 // Функция для вычисления натурального логарифма.
@@ -102,13 +101,13 @@ double dmLog(double x, double base) {
 }
 
 // Функция для вычисления квадратного корня числа.
-float dmSqrt(float x) {
+double dmSqrt(double x) {
     if (x < 0) {
         return 0.0; // Квадратный корень не определен для отрицательных чисел
     }
 
-    float guess = x; // Начальное предположение
-    float newGuess;
+    double guess = x; // Начальное предположение
+    double newGuess;
     int maxIterations = 1000; // Максимальное количество итераций
 
     while (maxIterations--) {
@@ -123,4 +122,3 @@ float dmSqrt(float x) {
 }
 
 #endif // DM_MATH_LIB_H
-
